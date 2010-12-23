@@ -47,11 +47,14 @@ module Appoxy
                 raise Appoxy::Api::ApiError, "No sig" if sig.nil?
                 timestamp2 = Appoxy::Api::Signatures.generate_timestamp(Time.now.gmtime)
                 raise Appoxy::Api::ApiError, "Request timed out!" unless (Time.parse(timestamp2)-Time.parse(timestamp))<60 # deny all requests older than 60 seconds
-                sig2 = Appoxy::Api::Signatures.generate_signature(operation+Appoxy::Api::Signatures.hash_to_s(params_for_signature), timestamp, secret_key_for_signature(access_key))
+                # Get application defined secret_key
+                secret_key = secret_key_for_signature(access_key)
+                sig2 = Appoxy::Api::Signatures.generate_signature(operation+Appoxy::Api::Signatures.hash_to_s(params_for_signature), timestamp, secret_key)
                 #p "signature 1 " + sig2 + " signature 2 " + sig
                 raise Appoxy::Api::ApiError, "Invalid signature!" unless sig == sig2
 
                 puts 'Verified OK'
+                true
 
             end
 
