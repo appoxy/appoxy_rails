@@ -1,10 +1,14 @@
 module Appoxy
 
     module Sessions
+
+
         module SessionsController
 
+            # Todo: have a configuration block for this so user can set things like facebook_api_key and facebook_secret
+
             def new
-                
+
             end
 
             def create
@@ -12,8 +16,9 @@ module Appoxy
 
                 logout_keeping_session!
 
-                #puts 'params=' + params.inspect
-                @email = params[:email]
+#                logger.debug 'params=' + params.inspect
+
+                @email        = params[:email]
                 @has_password = params[:has_password]
                 #puts 'has_pass? ' + @has_password.inspect
 
@@ -28,12 +33,12 @@ module Appoxy
 #                    user = User.authenticate(@email, params[:password])
                     if user && user.authenticate(params[:password])
                         self.current_user = user
-                        flash[:info] = "Logged in successfully."
-                        orig_url = session[:return_to]
+                        flash[:info]      = "Logged in successfully."
+                        orig_url          = session[:return_to]
                         puts 'orig_url = ' + orig_url.to_s
                         session[:return_to] = nil
                         if !orig_url.nil?
-                            redirect_to orig_url  # if entered via a different url
+                            redirect_to orig_url # if entered via a different url
                         else
                             after_create
                         end
@@ -51,9 +56,13 @@ module Appoxy
 
             end
 
+
+
+
             def before_create
 
             end
+
             def after_create
 
             end
@@ -82,7 +91,7 @@ module Appoxy
                     return
                 end
 
-                @newpass = random_string(8)
+                @newpass       = random_string(8)
 
                 @user.password = @newpass
                 @user.save(:dirty=>true)

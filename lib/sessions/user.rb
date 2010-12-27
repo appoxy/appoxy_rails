@@ -9,21 +9,27 @@ module Appoxy
             end
 
 
-            has_strings    :email,
-                           {:name => :password, :hashed=>true},
-                           :first_name,
-                           :last_name,
-                           :remember_me,
-                           :activation_code,
-                           :status # invited, active
+            has_strings :email,
+                        :open_id,
+                        {:name => :password, :hashed=>true},
+                        :first_name,
+                        :last_name,
+                        :remember_me,
+                        :activation_code,
+                        :status, # invited, active
+                        :oauth_access_key,
+                        :oauth_secret_key
 
-            has_dates :last_login
+            has_dates :last_login,
+                      :remember_me_expires
 
 
             def validate
                 errors.add("email", "is not valid") unless User.email_is_valid?(email)
 
                 if status == "invited"
+                    # doesn't need password
+                elsif open_id
                     # doesn't need password
                 else
                     errors.add("password", "must be at least 6 characters long.") if password.blank?
@@ -41,7 +47,6 @@ module Appoxy
             end
 
 
-
             def set_activation_code
                 self.activation_code=Digest::SHA1.hexdigest(email.to_s+Time.now.to_s)
             end
@@ -49,9 +54,8 @@ module Appoxy
 
             def activate!
                 self.activation_code=nil
-                self.status = "active"
+                self.status         = "active"
             end
-
 
 
             def authenticate(password)
