@@ -70,7 +70,7 @@ module Appoxy
                 ts = Appoxy::Api::Signatures.generate_timestamp(Time.now.gmtime)
                 #p "hash_to s" + command_path + Appoxy::Api::Signatures.hash_to_s(hash)
                 sig = Appoxy::Api::Signatures.generate_signature(command_path + Appoxy::Api::Signatures.hash_to_s(hash), ts, secret_key)
-                extra_params = {'sigv'=>"0.1", 'sig' => sig, 'timestamp' => ts, 'access_key' => access_key}
+                extra_params = {'sigv'=>"0.2", 'sig' => sig, 'timestamp' => ts, 'access_key' => access_key}
                 hash.merge!(extra_params)
 
             end
