@@ -2,7 +2,6 @@ module Appoxy
 
     module Sessions
 
-
         module SessionsController
 
             # Todo: have a configuration block for this so user can set things like facebook_api_key and facebook_secret
@@ -14,9 +13,14 @@ module Appoxy
             def create
                 before_create
 
-                logout_keeping_session!
+                # recaptchas should be optional
+#                unless verify_recaptcha
+#                    flash[:error] = "You are not human! Please try again."
+#                    render :action=>"forgot_password"
+#                    return
+#                end
 
-#                logger.debug 'params=' + params.inspect
+                logout_keeping_session!
 
                 @email        = params[:email]
                 @has_password = params[:has_password]
@@ -50,14 +54,9 @@ module Appoxy
                     end
                 else
                     # new user
-
                     redirect_to (new_user_path + "?email=#{@email}")
                 end
-
             end
-
-
-
 
             def before_create
 
@@ -67,15 +66,9 @@ module Appoxy
 
             end
 
-
             def reset_password
                 before_reset_password
 
-                unless verify_recaptcha
-                    flash[:error] = "You are not human! Please try again."
-                    render :action=>"forgot_password"
-                    return
-                end
 
                 @email = params[:email]
                 unless User.email_is_valid? @email

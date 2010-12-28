@@ -1,2 +1,2 @@
-require File.join(File.dirname(__FILE__), "ui", "application_helper")
+require_relative "ui/application_helper"
 
