@@ -34,7 +34,7 @@ module Appoxy
 #                params_for_signature = params_for_signature.delete_if {|key, value| ["access_key", "sigv", "sig", "timestamp"].include? key}
 
 
-                #p "params " +operation+Appoxy::Api::Signatures.hash_to_s(params_for_signature)
+                #puts "params " +operation+Appoxy::Api::Signatures.hash_to_s(params_for_signature)
                 access_key = params["access_key"]
                 sigv = params["sigv"]
                 timestamp = params["timestamp"]
@@ -42,16 +42,16 @@ module Appoxy
                 signature = ""
                 case sigv
                     when "0.1"
-                        p "outdated version of client"
+                        puts "outdated version of client"
                         signature = "#{controller_name}/#{action_name}"
                     when "0.2"
-                        p "new version of client"
+                        puts "new version of client"
                         operation = request.env["PATH_INFO"].gsub(/\/api\//, "")# here we're getting original request url'
                         params_for_signature = params2||request.query_parameters
                         params_for_signature = params_for_signature.delete_if {|key, value| ["access_key", "sigv", "sig", "timestamp"].include? key}
                         signature = operation+Appoxy::Api::Signatures.hash_to_s(params_for_signature)
                 end
-                p "signature " + signature
+#                puts "signature " + signature
                 raise Appoxy::Api::ApiError, "No access_key" if access_key.nil?
                 raise Appoxy::Api::ApiError, "No sigv" if sigv.nil?
                 raise Appoxy::Api::ApiError, "No timestamp" if timestamp.nil?
@@ -61,7 +61,7 @@ module Appoxy
                 sig2 = Appoxy::Api::Signatures.generate_signature(signature, timestamp, secret_key_for_signature(access_key))
                 raise Appoxy::Api::ApiError, "Invalid signature!" unless sig == sig2
 
-                puts 'Verified OK'
+                puts 'Signature OK'
 
             end
 
@@ -75,8 +75,8 @@ module Appoxy
                 response_as_string = '' # in case we want to add debugging or something
 #                respond_to do |format|
                 #                format.json { render :json=>msg }
-                response_as_string = render_to_string :json => msg
-                render :json => response_as_string
+#                response_as_string = render_to_string :json => msg
+                render :json => msg
 #                end
                 true
             end
