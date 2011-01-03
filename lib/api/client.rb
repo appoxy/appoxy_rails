@@ -7,7 +7,7 @@ module Appoxy
         #  host: endpoint url for service
         class Client
 
-            attr_accessor :host, :access_key, :secret_key
+            attr_accessor :host, :access_key, :secret_key, :version
 
 
             def initialize(host, access_key, secret_key, options={})
@@ -66,25 +66,21 @@ module Appoxy
             end
 
 
-            # old way
- def add_params(command_path, hash)
+            def add_params(command_path, hash)
+                v = version||"0.1"
                 ts = Appoxy::Api::Signatures.generate_timestamp(Time.now.gmtime)
                 # puts 'timestamp = ' + ts
-                sig = Appoxy::Api::Signatures.generate_signature(command_path, ts, secret_key)
+                sig =  case v
+                    when "0.2"
+                        Appoxy::Api::Signatures.generate_signature(command_path + Appoxy::Api::Signatures.hash_to_s(hash), ts, secret_key)
+                    when "0.1"
+                        Appoxy::Api::Signatures.generate_signature(command_path, ts, secret_key)
+                end
 
-                extra_params = {'sigv'=>"0.1", 'sig' => sig, 'timestamp' => ts, 'access_key' => access_key}
+                extra_params = {'sigv'=>v, 'sig' => sig, 'timestamp' => ts, 'access_key' => access_key}
                 hash.merge!(extra_params)
 
- end
-
-#            def add_params(command_path, hash)
-#                ts = Appoxy::Api::Signatures.generate_timestamp(Time.now.gmtime)
-#                #p "hash_to s" + command_path + Appoxy::Api::Signatures.hash_to_s(hash)
-#                sig = Appoxy::Api::Signatures.generate_signature(command_path + Appoxy::Api::Signatures.hash_to_s(hash), ts, secret_key)
-#                extra_params = {'sigv'=>"0.2", 'sig' => sig, 'timestamp' => ts, 'access_key' => access_key}
-#                hash.merge!(extra_params)
-#
-#            end
+            end
 
 
             def append_params(host, params)
