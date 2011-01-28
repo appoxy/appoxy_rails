@@ -22,19 +22,89 @@ OR:
 - gem 'appoxy_rails'
 - Delete all prototype scripts in public/javascripts
 
-## User
+
+## Includes
+
+### User
 
 Create a User model and extend `< Appoxy::Sessions::User`
 
-##
+### ApplicationController
 
-## appoxy_header
+Add `include Appoxy::Sessions::ApplicationController` to your ApplicationController.
 
+### ApplicationHelper
 
+Add `include Appoxy::UI::ApplicationHelper` to your ApplicationHelper.
 
-## appoxy_footer
+Includes:
 
+- Date formatting based on current user's timezone.
+- flash_messages
+- error_messages_for
 
+### UsersController
+
+Add `include Appoxy::Sessions::UsersController` to your SessionsController.
+
+Includes:
+
+- User creation.
+- Timezone setting.
+- Geo location setting.
+
+#### Callbacks
+
+- before_create
+- after_create
+
+### SessionsController
+
+Add `include Appoxy::Sessions::SessionsController` to your SessionsController.
+
+Includes:
+
+- Authentication
+- Password resetting
+- Logout
+
+#### Callbacks
+
+- before_create
+- after_create
+- after_reset_password - good for sending out an email, eg: Mailer.deliver_reset_password(@user, @newpass)
+
+### appoxy_javascripts
+
+Includes:
+
+- jquery
+- jquery ui
+
+### appoxy_header
+
+Includes:
+
+- appoxy_javascripts
+
+### appoxy_footer
+
+Includes:
+
+- Some debug stuff if in development environment.
+- Timezone script to get user timezone.
+
+## Authentication
+
+Any controllers that require authentication to view, use:
+
+    before_filter :authenticate
+
+### OpenID
+
+### Facebook
+
+### Oauth
 
 ## Sharing
 

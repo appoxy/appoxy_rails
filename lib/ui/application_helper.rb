@@ -12,18 +12,6 @@ module Appoxy
 #                puts self.class.name + " included in " + base.class.name
       end
 
-
-      def appoxy_javascripts
-        ' <script type="text/javascript" src="http://www.google.com/jsapi?key=ABQIAAAAhes0f80sBcwL-h5xCNkkgxQBmiBpQeSpIciQPfZ5Ss-a60KXIRQOVvqzsNpqzhmG9tjky_5rOuaeow"></script>
-        <script type="text/javascript">
-            google.load("jquery", "1");
-            google.load("jqueryui", "1");
-
-        </script>
-      '.html_safe
-      end
-
-
       def current_url
         request.url
       end
@@ -37,11 +25,23 @@ module Appoxy
         r
       end
 
+      def appoxy_javascripts
+        ' <script type="text/javascript" src="http://www.google.com/jsapi?key=ABQIAAAAhes0f80sBcwL-h5xCNkkgxQBmiBpQeSpIciQPfZ5Ss-a60KXIRQOVvqzsNpqzhmG9tjky_5rOuaeow"></script>
+        <script type="text/javascript">
+            google.load("jquery", "1");
+            google.load("jqueryui", "1");
+
+        </script>
+      '.html_safe
+      end
+
       # Place in application.html.erb in head to get default Appoxy style elements and javascripts.
-      def appoxy_head
+      def appoxy_header
         # stylesheets and what not could either be included in this gem or links to s3
 
         # include google javascript for jquery and jquery-ui and perhaps jquery tools
+        ret = appoxy_javascripts
+        ret.html_safe
       end
 
       def appoxy_footer

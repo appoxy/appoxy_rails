@@ -1,6 +1,6 @@
-# adds a to_pst method to Time
+
 module Appoxy
-  module Time
+  module TimeStuff # avoid naming conflicts. ;)
     module Zones
 
       def self.included(base) #:nodoc:
@@ -46,7 +46,7 @@ module Appoxy
   end
 end
 
-Time.send :include, Appoxy::Time::Zones
-DateTime.send :include, Appoxy::Time::Zones
-String.send :include, Appoxy::Time::StringTimezoner
+Time.send :include, Appoxy::TimeStuff::Zones
+DateTime.send :include, Appoxy::TimeStuff::Zones
+String.send :include, Appoxy::TimeStuff::StringTimezoner
 
