@@ -22,3 +22,19 @@ OR:
 - gem 'appoxy_rails'
 - Delete all prototype scripts in public/javascripts
 
+## User
+
+Create a User model and extend `< Appoxy::Sessions::User`
+
+##
+
+## appoxy_header
+
+
+
+## appoxy_footer
+
+
+
+## Sharing
+

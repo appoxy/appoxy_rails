@@ -8,9 +8,9 @@ module Appoxy
         puts self.name + " included in " + base.name
       end
 
-
       has_strings :email,
                   :open_id,
+                  :fb_id,  :fb_access_token,
                   {:name => :password, :hashed=>true},
                   :first_name,
                   :last_name,
@@ -19,11 +19,11 @@ module Appoxy
                   :status, # invited, active
                   :oauth_access_key,
                   :oauth_secret_key,
-                  :time_zone
+                  :time_zone,
+                  :lat, :lng
 
-
-      has_dates :last_login,
-                :remember_me_expires
+                  has_dates :last_login,
+                            :remember_me_expires
 
 
       def validate
