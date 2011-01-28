@@ -1,0 +1,56 @@
+<script type="text/javascript">
+function map_success(position) {
+
+    <% if @options[:show_map] %>
+    var mapcanvas = document.createElement('div');
+    mapcanvas.id = 'mapcanvas';
+    mapcanvas.style.width = '100%';
+    mapcanvas.style.height = '100px';
+
+    document.querySelector('<%=@options[:show_map]%>').appendChild(mapcanvas);
+
+    var latlng = new google.maps.LatLng(position.coords.latitude, position.coords.longitude);
+    var myOptions = {
+        zoom: 15,
+        center: latlng,
+        mapTypeControl: false,
+        navigationControlOptions: {style: google.maps.NavigationControlStyle.SMALL},
+        mapTypeId: google.maps.MapTypeId.ROADMAP
+    };
+    var map = new google.maps.Map(document.getElementById("mapcanvas"), myOptions);
+
+    var marker = new google.maps.Marker({
+        position: latlng,
+        map: map,
+        title:"You are here!"
+    });
+    <% end %>
+
+    <% if @options[:current_user] %>
+    $.post('/users/<%=@options[:current_user].id%>/geo_location', { lat: position.coords.latitude, lng: position.coords.longitude }, function(data) {
+        data = jQuery.parseJSON(data);
+        $("#status").html("updated.");
+    });
+    <% end %>
+
+}
+
+function map_error(msg) {
+    var s = document.querySelector('#status');
+    s.innerHTML = typeof msg == 'string' ? msg : "failed";
+    s.className = 'find_fail';
+
+    // console.log(arguments);
+}
+
+$(document).ready(function() {
+    if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(map_success, map_error, {maximumAge:60000 * 5}); // 1 minute
+    } else {
+//            error('not supported');
+    }
+
+});
+
+</script>
+

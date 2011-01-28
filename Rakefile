@@ -10,7 +10,7 @@ begin
         gemspec.email = "travis@appoxy.com"
         gemspec.homepage = "http://www.appoxy.com"
         gemspec.authors = ["Travis Reeder"]
-        gemspec.files = FileList['lib/**/*.rb']
+        gemspec.files = FileList['lib/**/*.rb', 'lib/**/*.html.erb']
         gemspec.add_dependency 'rest-client'
     end
     Jeweler::GemcutterTasks.new

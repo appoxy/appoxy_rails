@@ -5,13 +5,24 @@ module Appoxy
 
       def self.included(base)
         # Initialize module.
-#        helper_method :logged_in?
-#        helper_method :current_user
-#        helper_method :base_url
+        base.helper_method :logged_in?
+        base.helper_method :current_user
+        base.helper_method :base_url
+
+        base.after_filter :close_sdb_connection
+        base.before_filter :clear_sdb_stats
       end
 
 
       protected
+
+      def clear_sdb_stats
+        SimpleRecord.stats.clear
+      end
+
+      def close_sdb_connection
+        SimpleRecord.close_connection
+      end
 
 
       def logout_keeping_session!
@@ -46,6 +57,10 @@ module Appoxy
       def login_from_session
         #puts 'Login from session=' + session[:user_id].inspect
         ::User.find_by_id(session[:user_id]) if session[:user_id]
+      end
+
+      def current_url
+        request.url
       end
 
 
@@ -89,6 +104,22 @@ module Appoxy
 
       def after_authenticate
 
+      end
+
+      MOBILE_USER_AGENTS = 'palm|blackberry|nokia|phone|midp|mobi|symbian|chtml|ericsson|minimo|' +
+          'audiovox|motorola|samsung|telit|upg1|windows ce|ucweb|astel|plucker|' +
+          'x320|x240|j2me|sgh|portable|sprint|docomo|kddi|softbank|android|mmp|' +
+          'pdxgw|netfront|xiino|vodafone|portalmmm|sagem|mot-|sie-|ipod|up\\.b|' +
+          'webos|amoi|novarra|cdm|alcatel|pocket|ipad|iphone|mobileexplorer|' +
+          'mobile'
+
+      # SOME MOBILE STUFF FROM MOBILE_FU
+      def is_mobile_device?
+        request.user_agent.to_s.downcase =~ Regexp.new(MOBILE_USER_AGENTS)
+      end
+
+      def is_device?(type)
+        request.user_agent.to_s.downcase.include?(type.to_s.downcase)
       end
 
 
