@@ -2,10 +2,21 @@ module Appoxy
 
   module Sessions
 
+    #
+    # logout_session_path
     module SessionsController
 
-      # Todo: have a configuration block for this so user can set things like facebook_api_key and facebook_secret
+      require 'openid/store/filesystem'
+      require 'openid/extensions/ax'
 
+
+      def self.included(base)
+        puts 'SessionsController included'
+#        base.helper_method :facebook_oauth_url
+
+      end
+
+      # Todo: have a configuration block for this so user can set things like facebook_api_key and facebook_secret
       def new
 
       end
@@ -105,14 +116,70 @@ module Appoxy
       end
 
       def destroy
-        logout
-      end
-
-      def logout
         @current_user = nil
         reset_session
         flash[:info] = "You have been logged out."
-        redirect_to('/')
+        redirect_to root_url
+      end
+
+      def logout
+        destroy
+      end
+
+
+      def create_facebook
+        if facebook_auth(Rails.application.config.facebook_app_id,
+                         Rails.application.config.facebook_secret)
+          after_create
+
+        end
+      end
+
+      def facebook_auth(app_id, app_secret, options={})
+        p params
+        redirect_uri = options[:redirect_uri] || "#{base_url}/sessions/create_facebook"
+        code         = params['code'] # Facebooks verification string
+        if code
+          access_token_hash = MiniFB.oauth_access_token(app_id,
+                                                        redirect_uri,
+                                                        app_secret,
+                                                        code)
+          #            p access_token_hash
+          @access_token     = access_token_hash["access_token"]
+          unless @access_token
+            flash[:warning] = "Authentication did not work, no access_token"
+            redirect_to :action=>"new"
+            return
+          end
+
+          session[:access_token] = @access_token
+
+          me                     = MiniFB.get(@access_token, "me")
+          puts 'me=' + me.inspect
+          @user    = User.find_by_fb_id(me.id)
+          new_user = @user.nil?
+          if new_user
+            @user = User.create(:fb_id          =>me.id,
+                                :email          =>me.email,
+                                :first_name     =>me.first_name,
+                                :last_name      =>me.last_name,
+                                :fb_access_token=>@access_token,
+                                :status         =>"active")
+
+
+          else
+            @user.email           = me.email
+            @user.fb_access_token = @access_token
+            @user.first_name      = me.first_name
+            @user.last_name       = me.last_name
+            @user.status          = "active"
+            #                @user.fake = false
+            @user.save(:dirty=>true)
+          end
+          session[:user_id] = @user.id
+          @user
+
+        end
       end
 
 

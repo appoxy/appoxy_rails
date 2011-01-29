@@ -5,12 +5,16 @@ module Appoxy
 
       def self.included(base)
         # Initialize module.
+        puts 'ApplicationController included.'
         base.helper_method :logged_in?
         base.helper_method :current_user
         base.helper_method :base_url
 
         base.after_filter :close_sdb_connection
         base.before_filter :clear_sdb_stats
+
+        base.helper_method :facebook_oauth_url
+
       end
 
 
@@ -104,6 +108,19 @@ module Appoxy
 
       def after_authenticate
 
+      end
+
+
+
+      def facebook_oauth_url(options={})
+        puts 'appconfig==' + Rails.application.config.inspect
+        raise "Scope must be specified." unless options[:scope]
+        app_id = Rails.application.config.facebook_app_id
+        if app_id
+          @facebook_oauth_url = MiniFB.oauth_url(app_id,
+                                                 "#{base_url}/sessions/create_facebook", # redirect url
+                                                 :scope=>options[:scope].join(","))
+        end
       end
 
       MOBILE_USER_AGENTS = 'palm|blackberry|nokia|phone|midp|mobi|symbian|chtml|ericsson|minimo|' +
