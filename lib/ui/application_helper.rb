@@ -60,8 +60,12 @@ module Appoxy
         end
 
         if defined?(RELEASE_INFO)
-          ret += '<div style="clear:both; margin-top:15px;" class="instance_info_div"><%= INSTANCE_INFO["instance_id"] %>: Revision <%= RELEASE_INFO["scm"]["revision"][0..5] %> built on <%= RELEASE_INFO["deploy_date"] %></div>'
+          ret += '<div style="clear:both; margin-top:15px;"
+          class="instance_info_div">' + INSTANCE_INFO["instance_id"] + ':
+          Revision ' + RELEASE_INFO["scm"]["revision"][0..5] + ' built on ' +
+          RELEASE_INFO["deploy_date"] + '</div>'
         end
+
         if Rails.env == "development"
           ret += '<div style="margin-top: 10px;">' + ERB::Util.html_escape(SimpleRecord.stats.inspect) + '</div>'
         end
