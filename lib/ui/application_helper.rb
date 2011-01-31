@@ -63,7 +63,7 @@ module Appoxy
           ret += '<div style="clear:both; margin-top:15px;"
           class="instance_info_div">' + INSTANCE_INFO["instance_id"] + ':
           Revision ' + RELEASE_INFO["scm"]["revision"][0..5] + ' built on ' +
-          RELEASE_INFO["deploy_date"] + '</div>'
+              RELEASE_INFO["deploy_date"] + '</div>'
         end
 
         if Rails.env == "development"
@@ -128,10 +128,44 @@ module Appoxy
       def appoxy_geo_finder(options={})
 #        ret = File.read('_geo_location_finder.html.erb')
         options.merge!({:current_user=>current_user})
-        options = Appoxy::UI::BindingHack.new(options)
+        options  = Appoxy::UI::BindingHack.new(options)
         template = ERB.new(File.read(File.join(File.dirname(__FILE__), '_geo_location_finder.html.erb')))
         ret      = template.result(options.get_binding)
         ret.html_safe
+      end
+
+      # feed_url: url to atom or rss feed
+      # options:
+      #   :div_id => default is "news_feed"
+      def latest_news(feed_url, options={})
+        div_id = options[:div_id] || "news_feed"
+                s = <<-EOF
+<div id="#{div_id}"></div>
+
+<script type="text/javascript">
+
+      google.load("feeds", "1");
+
+      function #{div_id}_init() {
+          var feed = new google.feeds.Feed("#{feed_url}");
+          feed.setNumEntries(3)
+          feed.load(function(result) {
+              if (!result.error) {
+                  var container = $("##{div_id}");
+                  for (var i = 0; i < result.feed.entries.length; i++) {
+                      var entry = result.feed.entries[i];
+                    container.append('<div><div class="blog_title"><a href="' + entry.link + '">' + entry.title + '</a></div>'
+                    + '<div class="blog_body">' + entry.contentSnippet + '</div>'
+                    + '<div class="blog_date">' + entry.publishedDate + '</div>'
+                    + '</div>');
+                  }
+              }
+          });
+      }
+      google.setOnLoadCallback(#{div_id}_init);
+</script>
+EOF
+        s.html_safe
       end
 
 

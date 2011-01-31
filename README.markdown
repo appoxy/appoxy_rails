@@ -94,6 +94,14 @@ Includes:
 - Some debug stuff if in development environment.
 - Timezone script to get user timezone.
 
+### appoxy_geo_finder
+
+Finds user's geolocation and sets on User object.
+
+### latest_news(feed_url)
+
+Will display a feed of the specific url.
+
 ## Authentication
 
 Any controllers that require authentication to view, use:
