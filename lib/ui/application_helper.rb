@@ -1,4 +1,6 @@
 require_relative 'binding_hack'
+require_relative 'visualizations'
+
 
 module Appoxy
 
@@ -169,6 +171,9 @@ EOF
         s.html_safe
       end
 
+      def visualizations
+        Visualizations.new
+      end
 
     end
 

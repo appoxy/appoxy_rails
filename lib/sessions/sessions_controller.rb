@@ -22,7 +22,7 @@ module Appoxy
       end
 
       def create
-        before_create
+        return if before_create == false
 
         # recaptchas should be optional
 #                unless verify_recaptcha
@@ -79,6 +79,7 @@ module Appoxy
         end
       end
 
+      # Return false to stop before creating.
       def before_create
 
       end
