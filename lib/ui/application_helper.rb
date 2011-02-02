@@ -25,12 +25,13 @@ module Appoxy
         r
       end
 
+
+      # todo: add themes support http://www.stemkoski.com/jquery-ui-1-7-2-themes-list-at-google-code/
       def appoxy_javascripts
-        ' <script type="text/javascript" src="http://www.google.com/jsapi?key=ABQIAAAAhes0f80sBcwL-h5xCNkkgxQBmiBpQeSpIciQPfZ5Ss-a60KXIRQOVvqzsNpqzhmG9tjky_5rOuaeow"></script>
+        '<script type="text/javascript" src="http://www.google.com/jsapi?key=ABQIAAAAhes0f80sBcwL-h5xCNkkgxQBmiBpQeSpIciQPfZ5Ss-a60KXIRQOVvqzsNpqzhmG9tjky_5rOuaeow"></script>
         <script type="text/javascript">
             google.load("jquery", "1");
             google.load("jqueryui", "1");
-
         </script>
       '.html_safe
       end
@@ -95,10 +96,10 @@ module Appoxy
           flash.each_pair do |type, msg|
             if msg.is_a?(Array)
               msg.each do |m|
-                s2 << content_tag(:div, m, :class => type)
+                s2 << content_tag(:div, m, :class => "flash #{type}")
               end
             else
-              s2 << content_tag(:div, msg, :class => type)
+              s2 << content_tag(:div, msg, :class => "flash #{type}")
             end
           end
           s << s2
