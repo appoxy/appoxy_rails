@@ -11,6 +11,7 @@ begin
     gemspec.authors     = ["Travis Reeder"]
     gemspec.files       = FileList['lib/**/*.rb', 'lib/**/*.html.erb']
     gemspec.add_dependency 'rest-client'
+    gemspec.add_dependency 'oauth'
     gemspec.add_dependency 'ruby-openid'
     gemspec.add_dependency 'appoxy_api'
     gemspec.add_dependency 'mini_fb'
