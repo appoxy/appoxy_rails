@@ -5,11 +5,11 @@
 
 Gem::Specification.new do |s|
   s.name = %q{appoxy_rails}
-  s.version = "0.0.16"
+  s.version = "0.0.17"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Travis Reeder"]
-  s.date = %q{2011-02-01}
+  s.date = %q{2011-02-04}
   s.description = %q{Appoxy API Helper gem description...}
   s.email = %q{travis@appoxy.com}
   s.extra_rdoc_files = [
@@ -26,6 +26,7 @@ Gem::Specification.new do |s|
     "lib/appoxy_ui.rb",
     "lib/railtie.rb",
     "lib/sessions/application_controller.rb",
+    "lib/sessions/oauth_token.rb",
     "lib/sessions/sessions_controller.rb",
     "lib/sessions/shareable.rb",
     "lib/sessions/user.rb",
@@ -48,12 +49,14 @@ Gem::Specification.new do |s|
 
     if Gem::Version.new(Gem::VERSION) >= Gem::Version.new('1.2.0') then
       s.add_runtime_dependency(%q<rest-client>, [">= 0"])
+      s.add_runtime_dependency(%q<oauth>, [">= 0"])
       s.add_runtime_dependency(%q<ruby-openid>, [">= 0"])
       s.add_runtime_dependency(%q<appoxy_api>, [">= 0"])
       s.add_runtime_dependency(%q<mini_fb>, [">= 0"])
       s.add_runtime_dependency(%q<simple_record>, [">= 0"])
     else
       s.add_dependency(%q<rest-client>, [">= 0"])
+      s.add_dependency(%q<oauth>, [">= 0"])
       s.add_dependency(%q<ruby-openid>, [">= 0"])
       s.add_dependency(%q<appoxy_api>, [">= 0"])
       s.add_dependency(%q<mini_fb>, [">= 0"])
@@ -61,6 +64,7 @@ Gem::Specification.new do |s|
     end
   else
     s.add_dependency(%q<rest-client>, [">= 0"])
+    s.add_dependency(%q<oauth>, [">= 0"])
     s.add_dependency(%q<ruby-openid>, [">= 0"])
     s.add_dependency(%q<appoxy_api>, [">= 0"])
     s.add_dependency(%q<mini_fb>, [">= 0"])
