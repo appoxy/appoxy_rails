@@ -5,11 +5,11 @@
 
 Gem::Specification.new do |s|
   s.name = %q{appoxy_rails}
-  s.version = "0.0.14"
+  s.version = "0.0.16"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Travis Reeder"]
-  s.date = %q{2011-01-29}
+  s.date = %q{2011-02-01}
   s.description = %q{Appoxy API Helper gem description...}
   s.email = %q{travis@appoxy.com}
   s.extra_rdoc_files = [
@@ -34,7 +34,8 @@ Gem::Specification.new do |s|
     "lib/ui/application_helper.rb",
     "lib/ui/binding_hack.rb",
     "lib/ui/test.rb",
-    "lib/ui/time_zoner.rb"
+    "lib/ui/time_zoner.rb",
+    "lib/ui/visualizations.rb"
   ]
   s.homepage = %q{http://www.appoxy.com}
   s.require_paths = ["lib"]

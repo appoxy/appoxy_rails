@@ -22,7 +22,7 @@ module Appoxy
       end
 
       def create
-        before_create
+        return if before_create == false
 
         # recaptchas should be optional
 #                unless verify_recaptcha
@@ -34,41 +34,52 @@ module Appoxy
         logout_keeping_session!
 
         @email        = params[:email]
-        @has_password = params[:has_password]
-        #puts 'has_pass? ' + @has_password.inspect
-
-        if params[:has_password].blank?
-          flash[:error] = "Please click the radio button to let us know if you have a password or not."
+        if @email.blank?
+          flash[:error] = "You must enter a valid email address."
           render :action=>"new"
           return
         end
 
-        if @has_password == "true"
-          user = ::User.find_by_email(@email)
-#                    user = User.authenticate(@email, params[:password])
-          if user && user.authenticate(params[:password])
-            self.current_user = user
-            flash[:info]      = "Logged in successfully."
-            orig_url          = session[:return_to]
-            puts 'orig_url = ' + orig_url.to_s
-            session[:return_to] = nil
-            if !orig_url.nil?
-              redirect_to orig_url # if entered via a different url
-            else
-              after_create
-            end
-            user.last_login = Time.now
-            user.save(:dirty=>true)
-          else
-            flash[:info] = "Invalid email or password. Please try again."
-            render :action => 'new'
+        @has_password = params[:has_password]
+        #puts 'has_pass? ' + @has_password.inspect
+        @az_style     = params[:az_style]
+
+        if @az_style
+          if params[:has_password].blank?
+            flash[:error] = "Please click the radio button to let us know if you have a password or not."
+            render :action=>"new"
+            return
           end
+          if @has_password == "true"
+
+          else
+            # new user
+            redirect_to (new_user_path + "?email=#{@email}")
+          end
+        end
+
+        user = ::User.find_by_email(@email)
+#                    user = User.authenticate(@email, params[:password])
+        if user && user.authenticate(params[:password])
+          self.current_user = user
+          flash[:info]      = "Logged in successfully."
+          orig_url          = session[:return_to]
+          puts 'orig_url = ' + orig_url.to_s
+          session[:return_to] = nil
+          if !orig_url.nil?
+            redirect_to orig_url # if entered via a different url
+          else
+            after_create
+          end
+          user.last_login = Time.now
+          user.save(:dirty=>true)
         else
-          # new user
-          redirect_to (new_user_path + "?email=#{@email}")
+          flash[:error] = "Invalid email or password. Please try again."
+          render :action => 'new'
         end
       end
 
+      # Return false to stop before creating.
       def before_create
 
       end

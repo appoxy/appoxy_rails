@@ -1,4 +1,6 @@
 require_relative 'binding_hack'
+require_relative 'visualizations'
+
 
 module Appoxy
 
@@ -25,12 +27,13 @@ module Appoxy
         r
       end
 
+
+      # todo: add themes support http://www.stemkoski.com/jquery-ui-1-7-2-themes-list-at-google-code/
       def appoxy_javascripts
-        ' <script type="text/javascript" src="http://www.google.com/jsapi?key=ABQIAAAAhes0f80sBcwL-h5xCNkkgxQBmiBpQeSpIciQPfZ5Ss-a60KXIRQOVvqzsNpqzhmG9tjky_5rOuaeow"></script>
+        '<script type="text/javascript" src="http://www.google.com/jsapi?key=ABQIAAAAhes0f80sBcwL-h5xCNkkgxQBmiBpQeSpIciQPfZ5Ss-a60KXIRQOVvqzsNpqzhmG9tjky_5rOuaeow"></script>
         <script type="text/javascript">
             google.load("jquery", "1");
             google.load("jqueryui", "1");
-
         </script>
       '.html_safe
       end
@@ -63,7 +66,7 @@ module Appoxy
           ret += '<div style="clear:both; margin-top:15px;"
           class="instance_info_div">' + INSTANCE_INFO["instance_id"] + ':
           Revision ' + RELEASE_INFO["scm"]["revision"][0..5] + ' built on ' +
-          RELEASE_INFO["deploy_date"] + '</div>'
+              RELEASE_INFO["deploy_date"] + '</div>'
         end
 
         if Rails.env == "development"
@@ -95,10 +98,10 @@ module Appoxy
           flash.each_pair do |type, msg|
             if msg.is_a?(Array)
               msg.each do |m|
-                s2 << content_tag(:div, m, :class => type)
+                s2 << content_tag(:div, m, :class => "flash #{type}")
               end
             else
-              s2 << content_tag(:div, msg, :class => type)
+              s2 << content_tag(:div, msg, :class => "flash #{type}")
             end
           end
           s << s2
@@ -128,12 +131,49 @@ module Appoxy
       def appoxy_geo_finder(options={})
 #        ret = File.read('_geo_location_finder.html.erb')
         options.merge!({:current_user=>current_user})
-        options = Appoxy::UI::BindingHack.new(options)
+        options  = Appoxy::UI::BindingHack.new(options)
         template = ERB.new(File.read(File.join(File.dirname(__FILE__), '_geo_location_finder.html.erb')))
         ret      = template.result(options.get_binding)
         ret.html_safe
       end
 
+      # feed_url: url to atom or rss feed
+      # options:
+      #   :div_id => default is "news_feed"
+      def latest_news(feed_url, options={})
+        div_id = options[:div_id] || "news_feed"
+                s = <<-EOF
+<div id="#{div_id}"></div>
+
+<script type="text/javascript">
+
+      google.load("feeds", "1");
+
+      function #{div_id}_init() {
+          var feed = new google.feeds.Feed("#{feed_url}");
+          feed.setNumEntries(3)
+          feed.load(function(result) {
+              if (!result.error) {
+                  var container = $("##{div_id}");
+                  for (var i = 0; i < result.feed.entries.length; i++) {
+                      var entry = result.feed.entries[i];
+                    container.append('<div><div class="blog_title"><a href="' + entry.link + '">' + entry.title + '</a></div>'
+                    + '<div class="blog_body">' + entry.contentSnippet + '</div>'
+                    + '<div class="blog_date">' + entry.publishedDate + '</div>'
+                    + '</div>');
+                  }
+              }
+          });
+      }
+      google.setOnLoadCallback(#{div_id}_init);
+</script>
+EOF
+        s.html_safe
+      end
+
+      def visualizations
+        Visualizations.new
+      end
 
     end
 
