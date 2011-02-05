@@ -182,6 +182,52 @@ module Appoxy
         end
       end
 
+      def create_twitter
+        @request_token          = twitter_oauth_consumer.get_request_token(:oauth_callback => "#{base_url}/sessions/twitter_auth")
+        session[:request_token] = @request_token
+        ru                      = @request_token.authorize_url(:oauth_callback => "#{base_url}/sessions/twitter_auth")
+        puts ru.inspect
+        redirect_to ru
+      end
+
+      def twitter_auth
+        puts 'params=' + params.inspect
+        @request_token = session[:request_token]
+        @access_token  = @request_token.get_access_token(:oauth_verifier => params[:oauth_verifier])
+        puts 'access_token = ' + @access_token.inspect
+        #        token = AccessToken.new
+        #        token.user = current_user
+        #        token.token = @access_token.token
+        #        token.secret = @access_token.secret
+        #        token.save
+        token = OauthToken.find_by_user_id_and_site_and_type(current_user.id, @access_token.consumer.site, "access")
+        puts 'found token? ' + token.inspect
+        unless token
+          token = OauthToken.create(:type  =>"access",
+                                    :user  =>current_user,
+                                    :site  =>@access_token.consumer.site,
+                                    :token =>@access_token.token,
+                                    :secret=>@access_token.secret)
+        end
+
+        flash[:success] = "Authorized with Twitter."
+        redirect_to :controller => "socials"
+
+      end
+
+
+      private
+      def twitter_oauth_consumer(options={})
+        auth_path = options[:oauth] ? "authorize" : "authenticate"
+        @consumer = OAuth::Consumer.new(Rails.application.config.twitter_consumer_key, 
+                                        Rails.application.config.twitter_consumer_secret,
+                                        :site               => "https://api.twitter.com",
+                                        :oauth_callback     => "#{base_url}/sessions/twitter_auth",
+                                        :request_token_path => "/oauth/request_token",
+                                        :authorize_path     => "/oauth/#{auth_path}",
+                                        :access_token_path  => "/oauth/access_token")
+      end
+
 
     end
   end
