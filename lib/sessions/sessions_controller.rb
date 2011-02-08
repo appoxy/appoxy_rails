@@ -65,7 +65,7 @@ module Appoxy
           user.last_login   = Time.now
           user.save(:dirty=>true)
           flash[:info] = "Logged in successfully."
-
+          after_create
         else
           flash[:error] = "Invalid email or password. Please try again."
           render :action => 'new'
