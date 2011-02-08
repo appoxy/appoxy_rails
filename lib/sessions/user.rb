@@ -9,8 +9,10 @@ module Appoxy
       end
 
       has_strings :email,
+                  :username,
                   :open_id,
-                  :fb_id,  :fb_access_token,
+                  :twitter_id, :twitter_screen_name,
+                  :fb_id, :fb_access_token,
                   {:name => :password, :hashed=>true},
                   :first_name,
                   :last_name,
@@ -22,8 +24,8 @@ module Appoxy
                   :time_zone,
                   :lat, :lng
 
-                  has_dates :last_login,
-                            :remember_me_expires
+      has_dates :last_login,
+                :remember_me_expires
 
 
       def validate
