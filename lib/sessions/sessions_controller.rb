@@ -238,7 +238,7 @@ module Appoxy
 
         @user = User.find_by_twitter_id(@access_token.params[:user_id])
         unless @user
-          @user = User.new(:username           =>@access_token.params[:screen_name],
+          @user = User.new(# shouldn't set this, because can't say it will be unique ':username =>@access_token.params[:screen_name],
                            :twitter_screen_name=>@access_token.params[:screen_name],
                            :twitter_id         =>@access_token.params[:user_id])
           @user.save!
