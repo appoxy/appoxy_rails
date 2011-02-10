@@ -16,7 +16,7 @@ module Appoxy
                   {:name => :password, :hashed=>true},
                   :first_name,
                   :last_name,
-                  :remember_me,
+                  :remember_token,
                   :activation_code,
                   :status, # invited, active
                   :oauth_access_key,
@@ -25,18 +25,18 @@ module Appoxy
                   :lat, :lng
 
       has_dates :last_login,
-                :remember_me_expires
+                :remember_expires
 
 
       def validate
-        errors.add("email", "is not valid") unless User.email_is_valid?(email)
+#        errors.add("email", "is not valid") unless User.email_is_valid?(email)
 
         if status == "invited"
           # doesn't need password
         elsif open_id
           # doesn't need password
         else
-          errors.add("password", "must be at least 6 characters long.") if password.blank?
+#          errors.add("password", "must be at least 6 characters long.") if password.blank?
         end
       end
 
@@ -73,6 +73,12 @@ module Appoxy
         end
 
         (self.password == password) ? self : nil
+      end
+
+      def set_remember
+        rme_string            = random_string(50)
+        self.remember_token   = rme_string
+        self.remember_expires = 30.days.since
       end
 
 
