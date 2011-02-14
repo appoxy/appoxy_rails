@@ -1,4 +1,5 @@
 require 'active_support/core_ext'
+require_relative 'utils'
 require_relative 'appoxy_ui'
 require_relative 'appoxy_api'
 require_relative 'appoxy_sessions'

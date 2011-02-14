@@ -5,7 +5,6 @@ module Appoxy
 
       def self.included(base)
         # Initialize module.
-        puts 'ApplicationController included.'
         base.helper_method :logged_in?
         base.helper_method :current_user
         base.helper_method :base_url
@@ -53,14 +52,22 @@ module Appoxy
 
 
       def current_user
-        @current_user ||= (login_from_session)
+        @current_user ||= login_from_session
         @current_user
       end
 
 
       def login_from_session
         #puts 'Login from session=' + session[:user_id].inspect
-        ::User.find_by_id(session[:user_id]) if session[:user_id]
+        u = nil
+        if session[:user_id]
+          begin
+            u = ::User.find(session[:user_id])
+          rescue => ex
+            puts 'User not found: ' + ex.message
+          end
+        end
+        u
       end
 
       def current_url
@@ -78,10 +85,7 @@ module Appoxy
       end
 
       def random_string(length=10)
-        chars    = 'abcdefghjkmnpqrstuvwxyzABCDEFGHJKLMNPQRSTUVWXYZ23456789'
-        password = ''
-        length.times { password << chars[rand(chars.size)] }
-        password
+        Appoxy::Utils.random_string(length)
       end
 
       def authenticate
@@ -100,9 +104,10 @@ module Appoxy
             end
           end
           redirect_to :controller=>"sessions", :action=>"new", :ac=>params[:ac]
+        else
+          after_authenticate
         end
 
-        after_authenticate
 
       end
 

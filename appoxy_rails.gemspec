@@ -9,7 +9,7 @@ Gem::Specification.new do |s|
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Travis Reeder"]
-  s.date = %q{2011-02-07}
+  s.date = %q{2011-02-11}
   s.description = %q{Appoxy API Helper gem description...}
   s.email = %q{travis@appoxy.com}
   s.extra_rdoc_files = [
@@ -36,15 +36,15 @@ Gem::Specification.new do |s|
     "lib/ui/binding_hack.rb",
     "lib/ui/test.rb",
     "lib/ui/time_zoner.rb",
-    "lib/ui/visualizations.rb"
+    "lib/ui/visualizations.rb",
+    "lib/utils.rb"
   ]
   s.homepage = %q{http://www.appoxy.com}
   s.require_paths = ["lib"]
-  s.rubygems_version = %q{1.3.7}
+  s.rubygems_version = %q{1.5.1}
   s.summary = %q{Appoxy Rails Helper gem}
 
   if s.respond_to? :specification_version then
-    current_version = Gem::Specification::CURRENT_SPECIFICATION_VERSION
     s.specification_version = 3
 
     if Gem::Version.new(Gem::VERSION) >= Gem::Version.new('1.2.0') then

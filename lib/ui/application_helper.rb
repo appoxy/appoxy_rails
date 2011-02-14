@@ -91,7 +91,6 @@ module Appoxy
       end
 
       def flash_messages
-        puts 'FLASH MESSAGE!'
         if flash.size > 0
           s  = "<div class=\"flash_messages_container\">"
           s2 = ""
