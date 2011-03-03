@@ -1,9 +1,25 @@
 require 'active_support/core_ext'
+require 'digest/hmac'
+require 'net/http'
+require 'base64'
+
 require_relative 'utils'
 require_relative 'appoxy_ui'
-require_relative 'appoxy_api'
 require_relative 'appoxy_sessions'
 require_relative 'ui/time_zoner'
+
+require_relative "rails/api_controller"
+require_relative "rails/signatures"
+
+
+# backwards compatible.
+# @deprecated
+module Appoxy
+  module Api
+    include Appoxy::Rails
+    extend Appoxy::Rails
+  end
+end
 
 
 if defined?(Rails)

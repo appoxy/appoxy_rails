@@ -1,8 +1,8 @@
 module Appoxy
 
-    module Api
+    module Rails
 
-        # The api controllers that use this should set:
+        # The rails controllers that use this should set:
 #        protect_from_forgery :only => [] # can add methods to here, eg: :create, :update, :destroy
 
 #                rescue_from SigError, :with => :send_error
@@ -26,7 +26,7 @@ module Appoxy
                 end
 
                 #operation = "#{controller_name}/#{action_name}"
-                #operation = request.env["PATH_INFO"].gsub(/\/api\//, "")# here we're getting original request url'
+                #operation = request.env["PATH_INFO"].gsub(/\/rails\//, "")# here we're getting original request url'
 
 #                #getting clean params (without parsed via routes)
 #                params_for_signature = params2||request.query_parameters
@@ -46,7 +46,7 @@ module Appoxy
                         signature = "#{controller_name}/#{action_name}"
                     when "0.2"
                         puts "new version of client"
-                        operation = request.env["PATH_INFO"].gsub(/\/api\//, "")# here we're getting original request url'
+                        operation = request.env["PATH_INFO"].gsub(/\/rails\//, "")# here we're getting original request url'
                         params_for_signature = params2||request.query_parameters
                         params_for_signature = params_for_signature.delete_if {|key, value| ["access_key", "sigv", "sig", "timestamp"].include? key}
                         signature = operation+Appoxy::Api::Signatures.hash_to_s(params_for_signature)

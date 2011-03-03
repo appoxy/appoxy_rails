@@ -69,7 +69,7 @@ module Appoxy
               RELEASE_INFO["deploy_date"] + '</div>'
         end
 
-        if Rails.env == "development"
+        if ::Rails.env == "development"
           ret += '<div style="margin-top: 10px;">' + ERB::Util.html_escape(SimpleRecord.stats.inspect) + '</div>'
         end
         ret.html_safe

@@ -1,5 +1,5 @@
 module Appoxy
-    module Api
+    module Rails
         module Signatures
 
 

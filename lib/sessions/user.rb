@@ -76,7 +76,7 @@ module Appoxy
       end
 
       def set_remember
-        rme_string            = random_string(50)
+        rme_string            = Appoxy::Utils.random_string(50)
         self.remember_token   = rme_string
         self.remember_expires = 30.days.since
       end

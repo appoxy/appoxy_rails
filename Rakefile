@@ -1,4 +1,4 @@
-require './lib/appoxy_api.rb'
+require './lib/appoxy_rails.rb'
 
 begin
   require 'jeweler'

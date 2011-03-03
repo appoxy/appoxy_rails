@@ -118,9 +118,9 @@ module Appoxy
 
       def facebook_oauth_url(options={})
 #        puts 'appconfig==' + Rails.application.config.inspect
-        raise "Please config your facebook id and api keys." unless Rails.application.config.respond_to?(:facebook_app_id)
+        raise "Please config your facebook id and api keys." unless ::Rails.application.config.respond_to?(:facebook_app_id)
         raise "Scope must be specified." unless options[:scope]
-        app_id = Rails.application.config.facebook_app_id
+        app_id = ::Rails.application.config.facebook_app_id
         if app_id
           @facebook_oauth_url = MiniFB.oauth_url(app_id,
                                                  "#{base_url}/sessions/create_facebook", # redirect url

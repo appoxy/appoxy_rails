@@ -42,7 +42,7 @@ module Appoxy
 
         @has_password = params[:has_password]
         #puts 'has_pass? ' + @has_password.inspect
-        @az_style     = params[:az_style]
+        @az_style = params[:az_style]
 
         if @az_style
           if params[:has_password].blank?
@@ -62,7 +62,7 @@ module Appoxy
 #                    user = User.authenticate(@email, params[:password])
         if user && user.authenticate(params[:password])
           self.current_user = user
-          user.last_login   = Time.now
+          user.last_login = Time.now
           user.save(:dirty=>true)
           flash[:info] = "Logged in successfully."
           after_create
@@ -104,7 +104,7 @@ module Appoxy
           return
         end
 
-        @newpass       = random_string(8)
+        @newpass = random_string(8)
 
         @user.password = @newpass
         @user.save(:dirty=>true)
@@ -176,7 +176,7 @@ module Appoxy
           oidreq.return_to_args['force_post']='x'*2048
         end
         return_to = base_url + "/sessions/openid_complete"
-        realm     = base_url
+        realm = base_url
 
         puts 'about to redirect'
 
@@ -197,7 +197,7 @@ module Appoxy
 
         return if before_create == false
 
-        temp1       = session
+        temp1 = session
 
         current_url = base_url + "/sessions/openid_complete" # url_for(:action => 'complete', :only_path => false)
         puts 'current_url=' + current_url.inspect
@@ -219,7 +219,7 @@ module Appoxy
 
             user_data[:open_id] = oidresp.identity_url
             if params[:did_ax]
-              sreg_resp    = OpenID::AX::FetchResponse.from_success_response(oidresp)
+              sreg_resp = OpenID::AX::FetchResponse.from_success_response(oidresp)
               sreg_message = "AX Registration data was requested"
               if sreg_resp.data.empty?
                 sreg_message << ", but none was returned."
@@ -233,7 +233,7 @@ module Appoxy
               puts sreg_message
             end
             if params[:did_sreg]
-              sreg_resp    = OpenID::SReg::Response.from_success_response(oidresp)
+              sreg_resp = OpenID::SReg::Response.from_success_response(oidresp)
               sreg_message = "Simple Registration data was requested"
               if sreg_resp.empty?
                 sreg_message << ", but none was returned."
@@ -247,7 +247,7 @@ module Appoxy
               puts sreg_message
             end
             if params[:did_pape]
-              pape_resp    = OpenID::PAPE::Response.from_success_response(oidresp)
+              pape_resp = OpenID::PAPE::Response.from_success_response(oidresp)
               pape_message = "A phishing resistant authentication method was requested"
               if pape_resp.auth_policies.member? OpenID::PAPE::AUTH_PHISHING_RESISTANT
                 pape_message << ", and the server reported one."
@@ -284,8 +284,8 @@ module Appoxy
 
       def create_facebook
         return if before_create == false
-        if facebook_auth(Rails.application.config.facebook_app_id,
-                         Rails.application.config.facebook_secret)
+        if facebook_auth(::Rails.application.config.facebook_app_id,
+                         ::Rails.application.config.facebook_secret)
           after_create
 
         end
@@ -294,14 +294,14 @@ module Appoxy
       def facebook_auth(app_id, app_secret, options={})
         p params
         redirect_uri = options[:redirect_uri] || "#{base_url}/sessions/create_facebook"
-        code         = params['code'] # Facebooks verification string
+        code = params['code'] # Facebooks verification string
         if code
           access_token_hash = MiniFB.oauth_access_token(app_id,
                                                         redirect_uri,
                                                         app_secret,
                                                         code)
           #            p access_token_hash
-          @access_token     = access_token_hash["access_token"]
+          @access_token = access_token_hash["access_token"]
           unless @access_token
             flash[:warning] = "Authentication did not work, no access_token"
             redirect_to :action=>"new"
@@ -310,25 +310,25 @@ module Appoxy
 
           session[:access_token] = @access_token
 
-          me                     = MiniFB.get(@access_token, "me")
+          me = MiniFB.get(@access_token, "me")
           puts 'me=' + me.inspect
-          @user    = User.find_by_fb_id(me.id)
+          @user = User.find_by_fb_id(me.id)
           new_user = @user.nil?
           if new_user
-            @user = User.create(:fb_id          =>me.id,
-                                :email          =>me.email,
-                                :first_name     =>me.first_name,
-                                :last_name      =>me.last_name,
+            @user = User.create(:fb_id =>me.id,
+                                :email =>me.email,
+                                :first_name =>me.first_name,
+                                :last_name =>me.last_name,
                                 :fb_access_token=>@access_token,
-                                :status         =>"active")
+                                :status =>"active")
 
 
           else
-            @user.email           = me.email
+            @user.email = me.email
             @user.fb_access_token = @access_token
-            @user.first_name      = me.first_name
-            @user.last_name       = me.last_name
-            @user.status          = "active"
+            @user.first_name = me.first_name
+            @user.last_name = me.last_name
+            @user.status = "active"
             #                @user.fake = false
             @user.save(:dirty=>true)
           end
@@ -338,31 +338,33 @@ module Appoxy
         end
       end
 
-      def oauth_start(key, secret, callback_url, site, request_token_path, authorize_path, access_token_path)
-        consumer                = oauth_consumer(key, secret,
-                                                 callback_url,
-                                                 site,
-                                                 request_token_path,
-                                                 authorize_path,
-                                                 access_token_path
+
+      def oauth_start(key, secret, callback_url, site, request_token_path, authorize_path, access_token_path, options={})
+        consumer = oauth_consumer(key, secret,
+                                  callback_url,
+                                  site,
+                                  request_token_path,
+                                  authorize_path,
+                                  access_token_path,
+                                  options
         )
-        @request_token          = consumer.get_request_token(:oauth_callback => callback_url)
+        @request_token = consumer.get_request_token(:oauth_callback => callback_url)
         session[:request_token] = @request_token
-        auth_url                = @request_token.authorize_url(:oauth_callback => callback_url)
+        auth_url = @request_token.authorize_url(:oauth_callback => callback_url)
         puts auth_url.inspect
         redirect_to auth_url
       end
 
       def twitter_auth
-        signin                  = true
-        callback_url            = "#{base_url}/sessions/#{(signin ? "create_twitter" : "create_twitter_oauth")}"
-        auth_path               = signin ? "authenticate" : "authorize"
-        consumer                = oauth_start(Rails.application.config.twitter_consumer_key, Rails.application.config.twitter_consumer_secret,
-                                                 callback_url,
-                                                 "https://api.twitter.com",
-                                                 "/oauth/request_token",
-                                                 "/oauth/#{auth_path}",
-                                                 "/oauth/access_token"
+        signin = true
+        callback_url = "#{base_url}/sessions/#{(signin ? "create_twitter" : "create_twitter_oauth")}"
+        auth_path = signin ? "authenticate" : "authorize"
+        consumer = oauth_start(::Rails.application.config.twitter_consumer_key, Rails.application.config.twitter_consumer_secret,
+                               callback_url,
+                               "https://rails.twitter.com",
+                               "/oauth/request_token",
+                               "/oauth/#{auth_path}",
+                               "/oauth/access_token"
         )
       end
 
@@ -370,24 +372,24 @@ module Appoxy
       def create_twitter_oauth
         puts 'params=' + params.inspect
         @request_token = session[:request_token]
-        @access_token  = @request_token.get_access_token(:oauth_verifier => params[:oauth_verifier])
+        @access_token = @request_token.get_access_token(:oauth_verifier => params[:oauth_verifier])
         puts 'access_token = ' + @access_token.inspect
 
         token = OauthToken.find_by_user_id_and_site_and_type(current_user.id, @access_token.consumer(:signin=>true).site, "access")
         puts 'found token? ' + token.inspect
         unless token
-          token = OauthToken.new(:type  =>"access",
-                                 :user  =>current_user,
-                                 :site  =>@access_token.consumer.site,
+          token = OauthToken.new(:type =>"access",
+                                 :user =>current_user,
+                                 :site =>@access_token.consumer.site,
                                  :token =>@access_token.token,
                                  :secret=>@access_token.secret)
           token.save!
         else
-          token.token  = @access_token.token
+          token.token = @access_token.token
           token.secret = @access_token.secret
           token.save(:dirty=>true)
         end
-        @token          = token
+        @token = token
 
         flash[:success] = "Authorized with Twitter."
 
@@ -395,7 +397,7 @@ module Appoxy
 
       def get_oauth_access_token
         @request_token = session[:request_token]
-        @access_token  = @request_token.get_access_token(:oauth_verifier => params[:oauth_verifier])
+        @access_token = @request_token.get_access_token(:oauth_verifier => params[:oauth_verifier])
         puts 'access_token = ' + @access_token.inspect
         p @access_token.params
         @access_token
@@ -410,7 +412,7 @@ module Appoxy
         unless @user
           @user = User.new(# shouldn't set this, because can't say it will be unique ':username =>@access_token.params[:screen_name],
           :twitter_screen_name=>@access_token.params[:screen_name],
-          :twitter_id         =>@access_token.params[:user_id])
+          :twitter_id =>@access_token.params[:user_id])
           @user.set_remember
           @user.save
           puts '@user=' + @user.inspect
@@ -482,14 +484,18 @@ module Appoxy
       end
 
 
-      def oauth_consumer(key, secret, callback, site, request_token_path, authorize_path, access_token_path)
+      def oauth_consumer(key, secret, callback, site, request_token_path, authorize_path, access_token_path, options={})
+        params = {:site => site,
+                  :oauth_callback => callback,
+                  :request_token_path => request_token_path,
+                  :authorize_path => authorize_path,
+                  :access_token_path => access_token_path}
+        params[:signature_method] = options[:signature_method] if options[:signature_method]
+        params[:scheme] = options[:scheme] if options[:scheme]
+
         @consumer = OAuth::Consumer.new(key,
                                         secret,
-                                        :site               => site,
-                                        :oauth_callback     => callback,
-                                        :request_token_path => request_token_path,
-                                        :authorize_path     => authorize_path,
-                                        :access_token_path  => access_token_path)
+                                        params)
         p @consumer
         @consumer
       end
