@@ -438,7 +438,7 @@ module Appoxy
           return false
         else
           set_user_cookies(user)
-          after_create
+#          after_create
           return user
         end
       end
@@ -469,8 +469,8 @@ module Appoxy
 
       def set_user_cookies(user)
         set_current_user(user)
-        response.set_cookie('user_id', :value => user.id, :expires => user.remember_expires)
-        response.set_cookie('rme', :value=>user.remember_me, :expires => user.remember_expires)
+        response.set_cookie('user_id', :value => user.id, :expires => user.remember_expires.to_time)
+        response.set_cookie('rme', :value=>user.remember_token, :expires => user.remember_expires.to_time)
       end
 
 

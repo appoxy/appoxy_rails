@@ -13,6 +13,8 @@ module Appoxy
         base.before_filter :clear_sdb_stats
 
         base.helper_method :facebook_oauth_url
+        base.helper_method :is_mobile_device?
+        base.helper_method :is_device?
 
       end
 
@@ -29,7 +31,7 @@ module Appoxy
 
 
       def logout_keeping_session!
-        @current_user     = nil # not logged in, and don't do it for me
+        @current_user = nil # not logged in, and don't do it for me
         session[:user_id] = nil # keeps the session but kill our variable
       end
 
@@ -59,15 +61,26 @@ module Appoxy
 
       def login_from_session
         #puts 'Login from session=' + session[:user_id].inspect
-        u = nil
+        user = nil
         if session[:user_id]
           begin
-            u = ::User.find(session[:user_id])
+            user = ::User.find(session[:user_id])
           rescue => ex
             puts 'User not found: ' + ex.message
           end
         end
-        u
+        unless user
+          # else try with cookie
+          if cookies[:auth_token]
+            # todo: should this also check a user_id cookie too?
+            user = ::User.find_by_remember_token(cookies[:auth_token])
+          end
+          if user && !user.remember_token_expires.nil? && Time.now < user.remember_token_expires
+            @current_user = user
+            session[:user_id] = user.id
+          end
+        end
+        user
       end
 
       def current_url
@@ -90,14 +103,14 @@ module Appoxy
 
       def authenticate
         if !logged_in?
-          flash[:warning]     = "You need to login to access this page."
+          flash[:warning] = "You need to login to access this page."
           session[:return_to] = request.request_uri # return to after logging in
           puts "ac=" + params[:ac].inspect
           if params[:user_id] && params[:ac]
             # todo: should we store ac in cookie?  Make it easier to pass around
             cookies[:ac] = params[:ac]
             # then from an invite
-            user         = ::User.find(params[:user_id])
+            user = ::User.find(params[:user_id])
             if user && user.password.blank? # is this the best way to decide of user has not logged in? Could also check status.
               redirect_to :controller=>"users", :action=>"new", :email=>user.email, :ac=>params[:ac]
               return

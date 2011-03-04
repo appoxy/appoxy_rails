@@ -81,7 +81,7 @@ module Appoxy
       def date_format(date, options={})
         format = options[:format] || :long
 #        puts 'date_format on ' + date.class.name + " --- " + date.inspect
-        user   ||= @current_user
+        user ||= @current_user
         return '' if date.nil?
         date = Time.parse(date) if date.is_a?(String)
         if date.is_a?(Date) && !date.is_a?(DateTime) && !date.is_a?(Time)
@@ -90,17 +90,25 @@ module Appoxy
         return date.to_local_s(user, :format=>format)
       end
 
-      def flash_messages
+      def flash_messages(options={})
         if flash.size > 0
-          s  = "<div class=\"flash_messages_container\">"
+          s = "<div class=\"flash_messages_container\">"
           s2 = ""
           flash.each_pair do |type, msg|
+            clazz = "flash #{type}"
+            if options[:theme] == :jquery
+              if type == "error"
+                clazz << " ui-state-error"
+              elsif type == "highlight"
+                clazz << " ui-state-highlight"
+              end
+            end
             if msg.is_a?(Array)
               msg.each do |m|
-                s2 << content_tag(:div, m, :class => "flash #{type}")
+                s2 << content_tag(:div, m, :class =>clazz)
               end
             else
-              s2 << content_tag(:div, msg, :class => "flash #{type}")
+              s2 << content_tag(:div, msg, :class =>clazz)
             end
           end
           s << s2
@@ -109,10 +117,10 @@ module Appoxy
         end
       end
 
-      def error_messages_for(ob)
+      def error_messages_for(ob, options={})
         return '' if ob.nil?
         if ob.errors.size > 0
-          s  = "<div class=\"error_message_for_container\">"
+          s = "<div class=\"error_message_for_container\">"
           s2 = ""
           ob.errors.full_messages.each do |msg|
             s2 << content_tag(:div, msg, :class => "error_message_for")
@@ -130,9 +138,9 @@ module Appoxy
       def appoxy_geo_finder(options={})
 #        ret = File.read('_geo_location_finder.html.erb')
         options.merge!({:current_user=>current_user})
-        options  = Appoxy::UI::BindingHack.new(options)
+        options = Appoxy::UI::BindingHack.new(options)
         template = ERB.new(File.read(File.join(File.dirname(__FILE__), '_geo_location_finder.html.erb')))
-        ret      = template.result(options.get_binding)
+        ret = template.result(options.get_binding)
         ret.html_safe
       end
 
@@ -141,7 +149,7 @@ module Appoxy
       #   :div_id => default is "news_feed"
       def latest_news(feed_url, options={})
         div_id = options[:div_id] || "news_feed"
-                s = <<-EOF
+        s = <<-EOF
 <div id="#{div_id}"></div>
 
 <script type="text/javascript">
@@ -166,7 +174,7 @@ module Appoxy
       }
       google.setOnLoadCallback(#{div_id}_init);
 </script>
-EOF
+        EOF
         s.html_safe
       end
 
