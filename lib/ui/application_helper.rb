@@ -70,7 +70,7 @@ module Appoxy
         end
 
         if ::Rails.env == "development"
-          ret += '<div style="margin-top: 10px;">' + ERB::Util.html_escape(SimpleRecord.stats.inspect) + '</div>'
+          ret += '<div class="debug">' + ERB::Util.html_escape(SimpleRecord.stats.inspect) + '</div>'
         end
         ret.html_safe
       end

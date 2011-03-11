@@ -430,6 +430,10 @@ module Appoxy
 
       end
 
+      def google_oauth
+
+      end
+
       private
 
       def after_save_setup(user)
