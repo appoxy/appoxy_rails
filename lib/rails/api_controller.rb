@@ -15,7 +15,7 @@ module Appoxy
 
       def verify_signature
         params2 = nil
-        if request.put? || request.post?
+        if request.put? || (request.post? && !params["file"]) # we could not load binary in json
           # We'll extract params from body instead here
           # todo: maybe check for json format first in case this is a file or something?
           body = request.body.read
