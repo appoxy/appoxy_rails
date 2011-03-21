@@ -90,14 +90,14 @@ module Appoxy
 
 
       def send_error(statuscode_or_error, msg=nil)
-        exc = nil
+        backtrace = nil
         if statuscode_or_error.is_a? Exception
-          exc = statuscode_or_error
-          statuscode_or_error = 400
-          msg = exc.message
+          backtrace = statuscode_or_error.backtrace.to_s
+          msg = statuscode_or_error.message
+          statuscode_or_error = 500
         end
         # deprecate status, should use status_code
-        json_msg = {"status_code"=>statuscode_or_error, "msg"=>msg}
+        json_msg = {"status_code"=>statuscode_or_error, "msg"=>msg, "backtrace"=>backtrace}
         render :json=>json_msg, :status=>statuscode_or_error
         true
       end
