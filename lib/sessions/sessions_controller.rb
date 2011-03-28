@@ -359,9 +359,9 @@ module Appoxy
         signin = true
         callback_url = "#{base_url}/sessions/#{(signin ? "create_twitter" : "create_twitter_oauth")}"
         auth_path = signin ? "authenticate" : "authorize"
-        consumer = oauth_start(::Rails.application.config.twitter_consumer_key, Rails.application.config.twitter_consumer_secret,
+        consumer = oauth_start(::Rails.application.config.twitter_consumer_key, ::Rails.application.config.twitter_consumer_secret,
                                callback_url,
-                               "https://rails.twitter.com",
+                               "https://server_api.twitter.com",
                                "/oauth/request_token",
                                "/oauth/#{auth_path}",
                                "/oauth/access_token"

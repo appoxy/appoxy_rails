@@ -1,7 +1,7 @@
-# see http://rails.rubyonrails.org/classes/Rails/Railtie.html
+# see http://server_api.rubyonrails.org/classes/Rails/Railtie.html
 
 # Nice write-up of hooking gems into the views/layouts/statics of Rails 3 apps: 
-# http://numbers.brighterplanet.com/2010/07/26/sharing-views-across-rails-3-apps/
+# http://numbers.brighterplanet.com/2010/07/26/sharing-views-across-server_api-3-apps/
 
 require 'rails'
 
