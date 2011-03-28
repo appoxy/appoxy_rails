@@ -5,7 +5,7 @@
 
 Gem::Specification.new do |s|
   s.name = %q{appoxy_rails}
-  s.version = "0.0.30"
+  s.version = "0.0.31"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Travis Reeder"]
@@ -19,9 +19,9 @@ Gem::Specification.new do |s|
     "lib/appoxy_rails.rb",
     "lib/appoxy_sessions.rb",
     "lib/appoxy_ui.rb",
+    "lib/railtie.rb",
     "lib/server_api/api_controller.rb",
     "lib/server_api/signatures.rb",
-    "lib/railtie.rb",
     "lib/sessions/application_controller.rb",
     "lib/sessions/oauth_token.rb",
     "lib/sessions/sessions_controller.rb",
