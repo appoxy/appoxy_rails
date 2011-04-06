@@ -71,9 +71,9 @@ module Appoxy
         end
         unless user
           # else try with cookie
-          if cookies[:auth_token]
+          if cookies[:rme]
             # todo: should this also check a user_id cookie too?
-            user = ::User.find_by_remember_token(cookies[:auth_token])
+            user = ::User.find_by_remember_token(cookies[:rme])
           end
           if user && !user.remember_token_expires.nil? && Time.now < user.remember_token_expires
             @current_user = user
