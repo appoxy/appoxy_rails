@@ -50,6 +50,8 @@ module Appoxy
             params_for_signature = params2||request.query_parameters
             params_for_signature = params_for_signature.delete_if { |key, value| ["access_key", "sigv", "sig", "timestamp"].include? key }
             signature = operation+Appoxy::Api::Signatures.hash_to_s(params_for_signature)
+          when "0.3"#only for ssl version
+            signature = ""
         end
 #                puts "signature " + signature
         raise Appoxy::Api::ApiError, "No access_key" if access_key.nil?
