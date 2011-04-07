@@ -25,7 +25,7 @@ module Appoxy
                   :lat, :lng
 
       has_dates :last_login,
-                :remember_expires
+                :remember_token_expires
 
 
       def validate
@@ -78,7 +78,7 @@ module Appoxy
       def set_remember
         rme_string            = Appoxy::Utils.random_string(50)
         self.remember_token   = rme_string
-        self.remember_expires = 30.days.since
+        self.remember_token_expires = 30.days.since
       end
 
 

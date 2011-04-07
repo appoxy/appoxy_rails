@@ -473,8 +473,8 @@ module Appoxy
 
       def set_user_cookies(user)
         set_current_user(user)
-        response.set_cookie('user_id', :value => user.id, :expires => user.remember_expires.to_time)
-        response.set_cookie('rme', :value=>user.remember_token, :expires => user.remember_expires.to_time)
+        response.set_cookie('user_id', :value => user.id, :expires => user.remember_token_expires.to_time)
+        response.set_cookie('rme', :value=>user.remember_token, :expires => user.remember_token_expires.to_time)
       end
 
 

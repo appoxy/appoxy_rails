@@ -5,7 +5,7 @@
 
 Gem::Specification.new do |s|
   s.name = %q{appoxy_rails}
-  s.version = "0.0.32"
+  s.version = "0.0.33"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Travis Reeder"]
