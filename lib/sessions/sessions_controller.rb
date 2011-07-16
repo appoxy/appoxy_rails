@@ -505,6 +505,34 @@ module Appoxy
       end
 
 
+      # options:
+      #   :scope => See: http://code.google.com/apis/gdata/faq.html #AuthScopes .  Multiple scopes can be used, separted by space.
+      def google_consumer(options={})
+        session[:oauth] ||= {}
+
+        consumer_key = "anonymous"
+        consumer_secret = "anonymous"
+
+        scope = options[:scope]
+
+        @consumer ||= OAuth::Consumer.new(consumer_key, consumer_secret,
+                                          :site => "https://www.google.com",
+                                          :request_token_path => "/accounts/OAuthGetRequestToken?scope=#{scope}",
+                                          :access_token_path => '/accounts/OAuthGetAccessToken',
+                                          :authorize_path => '/accounts/OAuthAuthorizeToken'
+        )
+
+        if !session[:oauth][:request_token].nil? && !session[:oauth][:request_token_secret].nil?
+          @request_token = OAuth::RequestToken.new(@consumer, session[:oauth][:request_token], session[:oauth][:request_token_secret])
+        end
+
+        if !session[:oauth][:access_token].nil? && !session[:oauth][:access_token_secret].nil?
+          @access_token = OAuth::AccessToken.new(@consumer, session[:oauth][:access_token], session[:oauth][:access_token_secret])
+        end
+
+      end
+
+
     end
   end
 end
