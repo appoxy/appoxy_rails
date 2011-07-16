@@ -63,6 +63,8 @@ module Appoxy
         if user && user.authenticate(params[:password])
           self.current_user = user
           user.last_login = Time.now
+          user.set_remember
+          cookies.permanent[:rme] = user.remember_token
           user.save(:dirty=>true)
           flash[:info] = "Logged in successfully."
           after_create
