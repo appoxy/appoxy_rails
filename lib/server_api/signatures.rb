@@ -9,9 +9,9 @@ module Appoxy
 
 
       def self.generate_signature(operation, timestamp, secret_key)
-        my_sha_hmac = Digest::HMAC.digest(operation + timestamp, secret_key, Digest::SHA1)
-        my_b64_hmac_digest = Base64.encode64(my_sha_hmac).strip
-        return my_b64_hmac_digest
+        # my_sha_hmac = Digest::HMAC.digest(operation + timestamp, secret_key, Digest::SHA1)
+        # my_b64_hmac_digest = Base64.encode64(my_sha_hmac).strip
+        # return my_b64_hmac_digest
       end
 
 
